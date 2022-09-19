@@ -115,10 +115,9 @@ export default function phraseRoutes<T extends AnonymousRouter>(router: T, provi
         applicationId
       );
 
-      const supportedLanguages = new Set([
-        ...Object.keys(resource),
-        ...(await findAllCustomLanguageKeys()),
-      ]);
+      const builtInLanguages = Object.keys(resource);
+      const customLanguages = await findAllCustomLanguageKeys();
+      const supportedLanguages = new Set([...builtInLanguages, ...customLanguages]);
       const detectedLanguage = autoDetect
         ? detectLanguage(ctx).find((languageKey) => supportedLanguages.has(languageKey)) ??
           defaultLanguage

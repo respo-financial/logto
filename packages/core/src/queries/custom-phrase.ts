@@ -9,11 +9,13 @@ import { DeletionError } from '@/errors/SlonikError';
 const { table, fields } = convertToIdentifiers(CustomPhrases);
 
 export const findAllCustomLanguageKeys = async () => {
-  const rows = await envSet.pool.many<{ languageKey: string }>(sql`
-    select ${fields.languageKey}
-    from ${table}
-    order by ${fields.languageKey}
-  `);
+  const rows = await manyRows<{ languageKey: string }>(
+    envSet.pool.query(sql`
+      select ${fields.languageKey}
+      from ${table}
+      order by ${fields.languageKey}
+    `)
+  );
 
   return rows.map((row) => row.languageKey);
 };
