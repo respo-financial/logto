@@ -26,8 +26,8 @@ const getLanguageInfo = async (applicationId: unknown) => {
   return languageInfo;
 };
 
-const isLanguageKeyEnum = (key: string): key is LanguageKey =>
-  languageKeyGuard.safeParse(key).success;
+const isBuiltInLanguageKey = (key: string): key is LanguageKey =>
+  Object.keys(resource).includes(key) && languageKeyGuard.safeParse(key).success;
 
 const isFullyTranslated = (fullTranslation: Translation, targetTranslation: Translation) => {
   const keys = Object.keys(fullTranslation);
@@ -67,13 +67,13 @@ const getPhrase = async (
 ): Promise<ResourceLanguage> => {
   const customLanguageKeys = await findAllCustomLanguageKeys();
   const hasCustomPhrase = customLanguageKeys.includes(languageKey);
-  const hasBuiltInPhrase = Object.keys(resource).includes(languageKey);
+  const hasBuiltInPhrase = isBuiltInLanguageKey(languageKey);
 
   if (!hasCustomPhrase && !hasBuiltInPhrase) {
     return getPhrase(defaultLanguageKey);
   }
 
-  if (!hasCustomPhrase && isLanguageKeyEnum(languageKey)) {
+  if (!hasCustomPhrase && hasBuiltInPhrase) {
     return { languageKey, ...resource[languageKey] };
   }
 
@@ -83,7 +83,7 @@ const getPhrase = async (
     return customPhrase;
   }
 
-  if (hasBuiltInPhrase && isLanguageKeyEnum(languageKey)) {
+  if (hasBuiltInPhrase) {
     return deepmerge(resource[languageKey], customPhrase);
   }
 
