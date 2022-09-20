@@ -1,25 +1,13 @@
 import { CustomPhrase } from '@logto/schemas';
 
 import { mockSignInExperience } from '@/__mocks__';
+import { mockZhCnCustomPhrase, zhCnKey } from '@/__mocks__/custom-phrase';
 import RequestError from '@/errors/RequestError';
 import customPhraseRoutes from '@/routes/custom-phrase';
 import { createRequester } from '@/utils/test-utils';
 
-const mockLanguageKey = 'en-US';
-
 const mockCustomPhrases: Record<string, CustomPhrase> = {
-  [mockLanguageKey]: {
-    languageKey: mockLanguageKey,
-    translation: {
-      input: {
-        username: 'Username',
-        password: 'Password',
-        email: 'Email',
-        phone_number: 'Phone number',
-        confirm_password: 'Confirm password',
-      },
-    },
-  },
+  [zhCnKey]: mockZhCnCustomPhrase,
 };
 
 const deleteCustomPhraseByLanguageKey = jest.fn(async (languageKey: string) => {
@@ -84,14 +72,14 @@ describe('customPhraseRoutes', () => {
 
   describe('GET /custom-phrases/:languageKey', () => {
     it('should call findCustomPhraseByLanguageKey once', async () => {
-      await customPhraseRequest.get(`/custom-phrases/${mockLanguageKey}`);
+      await customPhraseRequest.get(`/custom-phrases/${zhCnKey}`);
       expect(findCustomPhraseByLanguageKey).toBeCalledTimes(1);
     });
 
     it('should return the specified custom phrase existing in the database', async () => {
-      const response = await customPhraseRequest.get(`/custom-phrases/${mockLanguageKey}`);
+      const response = await customPhraseRequest.get(`/custom-phrases/${zhCnKey}`);
       expect(response.status).toEqual(200);
-      expect(response.body).toEqual(mockCustomPhrases[mockLanguageKey]);
+      expect(response.body).toEqual(mockCustomPhrases[zhCnKey]);
     });
 
     it('should return 404 status code when there is no specified custom phrase in the database', async () => {
@@ -103,28 +91,28 @@ describe('customPhraseRoutes', () => {
   describe('PUT /custom-phrases/:languageKey', () => {
     it('should call upsertCustomPhrase with specified language key', async () => {
       await customPhraseRequest
-        .put(`/custom-phrases/${mockLanguageKey}`)
-        .send(mockCustomPhrases[mockLanguageKey]?.translation);
-      expect(upsertCustomPhrase).toBeCalledWith(mockCustomPhrases[mockLanguageKey]);
+        .put(`/custom-phrases/${zhCnKey}`)
+        .send(mockCustomPhrases[zhCnKey]?.translation);
+      expect(upsertCustomPhrase).toBeCalledWith(mockCustomPhrases[zhCnKey]);
     });
 
     it('should return the custom phrase after upserting', async () => {
       const response = await customPhraseRequest
-        .put(`/custom-phrases/${mockLanguageKey}`)
-        .send(mockCustomPhrases[mockLanguageKey]?.translation);
+        .put(`/custom-phrases/${zhCnKey}`)
+        .send(mockCustomPhrases[zhCnKey]?.translation);
       expect(response.status).toEqual(200);
-      expect(response.body).toEqual(mockCustomPhrases[mockLanguageKey]);
+      expect(response.body).toEqual(mockCustomPhrases[zhCnKey]);
     });
   });
 
   describe('DELETE /custom-phrases/:languageKey', () => {
     it('should call deleteCustomPhraseByLanguageKey', async () => {
-      await customPhraseRequest.delete(`/custom-phrases/${mockLanguageKey}`);
-      expect(deleteCustomPhraseByLanguageKey).toBeCalledWith(mockLanguageKey);
+      await customPhraseRequest.delete(`/custom-phrases/${zhCnKey}`);
+      expect(deleteCustomPhraseByLanguageKey).toBeCalledWith(zhCnKey);
     });
 
     it('should return 204 status code after deleting the specified custom phrase', async () => {
-      const response = await customPhraseRequest.delete(`/custom-phrases/${mockLanguageKey}`);
+      const response = await customPhraseRequest.delete(`/custom-phrases/${zhCnKey}`);
       expect(response.status).toEqual(204);
     });
 
