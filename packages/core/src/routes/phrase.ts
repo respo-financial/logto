@@ -4,12 +4,11 @@ import { Provider } from 'oidc-provider';
 import { z } from 'zod';
 
 import detectLanguage from '@/i18n/detect-language';
-import { getResourceLanguage } from '@/lib/phrase';
+import { getResourceLanguage, isBuiltInLanguage } from '@/lib/phrase';
 import koaGuard from '@/middleware/koa-guard';
 import { findAllCustomLanguageKeys } from '@/queries/custom-phrase';
 import { findDefaultSignInExperience } from '@/queries/sign-in-experience';
 
-import { isBuiltInLanguage } from '../../build/lib/resource-language';
 import { AnonymousRouter } from './types';
 
 const getLanguageInfo = async (applicationId: unknown) => {
