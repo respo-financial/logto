@@ -1,12 +1,10 @@
 import en from '@logto/phrases-ui/lib/locales/en';
 
 export const enKey = 'en';
-export const frKey = 'fr';
 export const koKrKey = 'ko-KR';
 export const trTrKey = 'tr-TR';
 export const zhCnKey = 'zh-CN';
 export const zhHkKey = 'zh-HK';
-export const zhTwKey = 'zh-TW';
 
 export const mockEnCustomPhrase = {
   languageKey: enKey,
@@ -64,19 +62,6 @@ export const mockZhHkCustomPhrase = {
       username: '用戶名 3',
       phone_number: '手機號 4',
       confirm_password: '確認密碼 5',
-    },
-  },
-};
-
-export const mockZhTwCustomPhrase = {
-  languageKey: zhTwKey,
-  translation: {
-    input: {
-      email: '郵箱 A',
-      password: '密碼 B',
-      username: '用戶名 C',
-      phone_number: '手機號 D',
-      confirm_password: '確認密碼 E',
     },
   },
 };
