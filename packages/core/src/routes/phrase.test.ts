@@ -47,6 +47,16 @@ jest.mock('@/queries/custom-phrase', () => ({
   findCustomPhraseByLanguageKey: async (key: string) => findCustomPhraseByLanguageKey(key),
 }));
 
+const getResourceLanguage = jest.fn(async (language: string, customLanguages: string[]) => ({
+  translation: { foo: 'bar' },
+}));
+
+jest.mock('@/lib/phrase', () => ({
+  ...jest.requireActual('@/lib/phrase'),
+  getResourceLanguage: async (language: string, customLanguages: string[]) =>
+    getResourceLanguage(language, customLanguages),
+}));
+
 const phraseRequest = createRequester({
   anonymousRoutes: phraseRoutes,
   provider: new Provider(''),
@@ -83,14 +93,12 @@ describe('when the application is admin-console', () => {
     expect(findAllCustomLanguageKeys).toBeCalledTimes(1);
   });
 
-  it('should call findCustomPhraseByLanguageKey with fallback language from admin console sign-in experience when its custom phrase exists', async () => {
-    findAllCustomLanguageKeys.mockResolvedValueOnce([
-      adminConsoleSignInExperience.languageInfo.fallbackLanguage,
-    ]);
+  it('should call getResourceLanguage with fallback language from Admin Console sign-in experience', async () => {
     await expect(phraseRequest.get('/phrase')).resolves.toHaveProperty('status', 200);
-    expect(findCustomPhraseByLanguageKey).toBeCalledTimes(1);
-    expect(findCustomPhraseByLanguageKey).toBeCalledWith(
-      adminConsoleSignInExperience.languageInfo.fallbackLanguage
+    expect(getResourceLanguage).toBeCalledTimes(1);
+    expect(getResourceLanguage).toBeCalledWith(
+      adminConsoleSignInExperience.languageInfo.fallbackLanguage,
+      [customizedLanguage]
     );
   });
 });
@@ -141,7 +149,7 @@ describe('when the application is not admin-console', () => {
     expect(findAllCustomLanguageKeys).toBeCalledTimes(1);
   });
 
-  it('should call findCustomPhraseByLanguageKey when specified language has custom phrase', async () => {
+  it('should call getResourceLanguage with fallback language from default sign-in experience', async () => {
     findDefaultSignInExperience.mockResolvedValueOnce({
       ...mockSignInExperience,
       languageInfo: {
@@ -151,7 +159,7 @@ describe('when the application is not admin-console', () => {
       },
     });
     await expect(phraseRequest.get('/phrase')).resolves.toHaveProperty('status', 200);
-    expect(findCustomPhraseByLanguageKey).toBeCalledTimes(1);
-    expect(findCustomPhraseByLanguageKey).toBeCalledWith(customizedLanguage);
+    expect(getResourceLanguage).toBeCalledTimes(1);
+    expect(getResourceLanguage).toBeCalledWith(customizedLanguage, [customizedLanguage]);
   });
 });

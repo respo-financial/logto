@@ -1,17 +1,15 @@
-import { LanguageKey } from '@logto/core-kit';
-import resource from '@logto/phrases-ui';
-import { CustomPhrase, translationGuard } from '@logto/schemas';
+import { translationGuard } from '@logto/schemas';
 import { adminConsoleApplicationId, adminConsoleSignInExperience } from '@logto/schemas/lib/seeds';
-import deepmerge from 'deepmerge';
-import { ResourceLanguage } from 'i18next';
 import { Provider } from 'oidc-provider';
 import { z } from 'zod';
 
 import detectLanguage from '@/i18n/detect-language';
+import { getResourceLanguage } from '@/lib/phrase';
 import koaGuard from '@/middleware/koa-guard';
-import { findAllCustomLanguageKeys, findCustomPhraseByLanguageKey } from '@/queries/custom-phrase';
+import { findAllCustomLanguageKeys } from '@/queries/custom-phrase';
 import { findDefaultSignInExperience } from '@/queries/sign-in-experience';
 
+import { isBuiltInLanguage } from '../../build/lib/resource-language';
 import { AnonymousRouter } from './types';
 
 const getLanguageInfo = async (applicationId: unknown) => {
@@ -22,28 +20,6 @@ const getLanguageInfo = async (applicationId: unknown) => {
   const { languageInfo } = await findDefaultSignInExperience();
 
   return languageInfo;
-};
-
-const isBuiltInLanguage = (key: string): key is LanguageKey => Object.keys(resource).includes(key);
-
-const getBuiltInResourceLanguage = (key: LanguageKey): ResourceLanguage => resource[key];
-
-const getResourceLanguage = async (supportedLanguage: string, customLanguages: string[]) => {
-  if (!isBuiltInLanguage(supportedLanguage)) {
-    return deepmerge<ResourceLanguage, CustomPhrase>(
-      resource.en,
-      await findCustomPhraseByLanguageKey(supportedLanguage)
-    );
-  }
-
-  if (!customLanguages.includes(supportedLanguage)) {
-    return getBuiltInResourceLanguage(supportedLanguage);
-  }
-
-  return deepmerge<ResourceLanguage, CustomPhrase>(
-    getBuiltInResourceLanguage(supportedLanguage),
-    await findCustomPhraseByLanguageKey(supportedLanguage)
-  );
 };
 
 export default function phraseRoutes<T extends AnonymousRouter>(router: T, provider: Provider) {
