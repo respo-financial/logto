@@ -12,7 +12,7 @@ import {
   zhHkKey,
 } from '@/__mocks__/custom-phrase';
 import RequestError from '@/errors/RequestError';
-import { getResourceLanguage } from '@/lib/phrase';
+import { getPhrase } from '@/lib/phrase';
 
 const englishBuiltInPhrase = resource[enKey];
 
@@ -49,19 +49,19 @@ afterEach(() => {
 
 describe('when the language is English', () => {
   it('should be English custom phrase merged with its built-in phrase when its custom phrase exists', async () => {
-    await expect(getResourceLanguage(enKey, [enKey])).resolves.toEqual(
+    await expect(getPhrase(enKey, [enKey])).resolves.toEqual(
       deepmerge(englishBuiltInPhrase, mockEnCustomPhrase)
     );
   });
 
   it('should be English built-in phrase when its custom phrase does not exist', async () => {
-    await expect(getResourceLanguage(enKey, [])).resolves.toEqual(englishBuiltInPhrase);
+    await expect(getPhrase(enKey, [])).resolves.toEqual(englishBuiltInPhrase);
   });
 });
 
 describe('when the language is not English', () => {
   it('should be custom phrase merged with built-in phrase when both of them exist', async () => {
-    await expect(getResourceLanguage(customizedLanguage, [customizedLanguage])).resolves.toEqual(
+    await expect(getPhrase(customizedLanguage, [customizedLanguage])).resolves.toEqual(
       deepmerge(customizedBuiltInPhrase, customizedCustomPhrase)
     );
   });
@@ -69,11 +69,11 @@ describe('when the language is not English', () => {
   it('should be built-in phrase when there is built-in phrase and no custom phrase', async () => {
     const builtInOnlyLanguage = trTrKey;
     const builtInOnlyPhrase = resource[trTrKey];
-    await expect(getResourceLanguage(builtInOnlyLanguage, [])).resolves.toEqual(builtInOnlyPhrase);
+    await expect(getPhrase(builtInOnlyLanguage, [])).resolves.toEqual(builtInOnlyPhrase);
   });
 
   it('should be built-in phrase when there is custom phrase and no built-in phrase', async () => {
-    await expect(getResourceLanguage(customOnlyLanguage, [customOnlyLanguage])).resolves.toEqual(
+    await expect(getPhrase(customOnlyLanguage, [customOnlyLanguage])).resolves.toEqual(
       deepmerge(englishBuiltInPhrase, customOnlyCustomPhrase)
     );
   });

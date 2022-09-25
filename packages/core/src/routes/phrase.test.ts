@@ -1,3 +1,5 @@
+import zhCN from '@logto/phrases-ui/lib/locales/zh-cn';
+import { Phrase } from '@logto/phrases-ui/lib/types';
 import { SignInExperience } from '@logto/schemas';
 import { adminConsoleApplicationId, adminConsoleSignInExperience } from '@logto/schemas/lib/seeds';
 import { Provider } from 'oidc-provider';
@@ -47,14 +49,12 @@ jest.mock('@/queries/custom-phrase', () => ({
   findCustomPhraseByLanguageKey: async (key: string) => findCustomPhraseByLanguageKey(key),
 }));
 
-const getResourceLanguage = jest.fn(async (language: string, customLanguages: string[]) => ({
-  translation: { foo: 'bar' },
-}));
+const getPhrase = jest.fn(async (language: string, customLanguages: string[]) => zhCN);
 
 jest.mock('@/lib/phrase', () => ({
   ...jest.requireActual('@/lib/phrase'),
-  getResourceLanguage: async (language: string, customLanguages: string[]) =>
-    getResourceLanguage(language, customLanguages),
+  getPhrase: async (language: string, customLanguages: string[]) =>
+    getPhrase(language, customLanguages),
 }));
 
 const phraseRequest = createRequester({
@@ -93,23 +93,16 @@ describe('when the application is admin-console', () => {
     expect(findAllCustomLanguageKeys).toBeCalledTimes(1);
   });
 
-  it('should call getResourceLanguage with fallback language from Admin Console sign-in experience', async () => {
+  it('should call getPhrase with fallback language from Admin Console sign-in experience', async () => {
     await expect(phraseRequest.get('/phrase')).resolves.toHaveProperty('status', 200);
-    expect(getResourceLanguage).toBeCalledTimes(1);
-    expect(getResourceLanguage).toBeCalledWith(
-      adminConsoleSignInExperience.languageInfo.fallbackLanguage,
-      [customizedLanguage]
-    );
+    expect(getPhrase).toBeCalledTimes(1);
+    expect(getPhrase).toBeCalledWith(adminConsoleSignInExperience.languageInfo.fallbackLanguage, [
+      customizedLanguage,
+    ]);
   });
 });
 
 describe('when the application is not admin-console', () => {
-  beforeEach(() => {
-    interactionDetails.mockResolvedValueOnce({
-      params: { client_id: mockApplicationId },
-    });
-  });
-
   it('should call interactionDetails', async () => {
     await expect(phraseRequest.get('/phrase')).resolves.toHaveProperty('status', 200);
     expect(interactionDetails).toBeCalledTimes(1);
@@ -149,7 +142,7 @@ describe('when the application is not admin-console', () => {
     expect(findAllCustomLanguageKeys).toBeCalledTimes(1);
   });
 
-  it('should call getResourceLanguage with fallback language from default sign-in experience', async () => {
+  it('should call getPhrase with fallback language from default sign-in experience', async () => {
     findDefaultSignInExperience.mockResolvedValueOnce({
       ...mockSignInExperience,
       languageInfo: {
@@ -159,7 +152,21 @@ describe('when the application is not admin-console', () => {
       },
     });
     await expect(phraseRequest.get('/phrase')).resolves.toHaveProperty('status', 200);
-    expect(getResourceLanguage).toBeCalledTimes(1);
-    expect(getResourceLanguage).toBeCalledWith(customizedLanguage, [customizedLanguage]);
+    expect(getPhrase).toBeCalledTimes(1);
+    expect(getPhrase).toBeCalledWith(customizedLanguage, [customizedLanguage]);
   });
+});
+
+it('should fail when the phrase is not fully-translated', async () => {
+  const notFullyTranslatedPhrase: Phrase = {
+    translation: {
+      ...zhCN.translation,
+      // @ts-expect-error missing key-value pair `social_bind_with: '...'`
+      secondary: {
+        sign_in_with: '', // Unexpected empty value
+      },
+    },
+  };
+  getPhrase.mockResolvedValueOnce(notFullyTranslatedPhrase);
+  await expect(phraseRequest.get('/phrase')).resolves.toHaveProperty('status', 500);
 });

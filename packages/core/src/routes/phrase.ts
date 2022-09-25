@@ -1,13 +1,13 @@
-import { translationGuard } from '@logto/schemas';
 import { adminConsoleApplicationId, adminConsoleSignInExperience } from '@logto/schemas/lib/seeds';
 import { Provider } from 'oidc-provider';
 import { z } from 'zod';
 
 import detectLanguage from '@/i18n/detect-language';
-import { getResourceLanguage, isBuiltInLanguage } from '@/lib/phrase';
+import { isBuiltInLanguage, getPhrase } from '@/lib/phrase';
 import koaGuard from '@/middleware/koa-guard';
 import { findAllCustomLanguageKeys } from '@/queries/custom-phrase';
 import { findDefaultSignInExperience } from '@/queries/sign-in-experience';
+import { fullTranslationGuard } from '@/utils/translation';
 
 import { AnonymousRouter } from './types';
 
@@ -25,7 +25,9 @@ export default function phraseRoutes<T extends AnonymousRouter>(router: T, provi
   router.get(
     '/phrase',
     koaGuard({
-      response: z.object({ translation: translationGuard }),
+      response: z.object({
+        translation: fullTranslationGuard,
+      }),
     }),
     async (ctx, next) => {
       const interaction = await provider
@@ -45,7 +47,7 @@ export default function phraseRoutes<T extends AnonymousRouter>(router: T, provi
         ) ?? 'en';
 
       ctx.set('Content-Language', language);
-      ctx.body = await getResourceLanguage(language, customLanguages);
+      ctx.body = await getPhrase(language, customLanguages);
 
       return next();
     }

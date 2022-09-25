@@ -1,3 +1,4 @@
+import en from '@logto/phrases-ui/lib/locales/en';
 import { Provider } from 'oidc-provider';
 
 import { mockSignInExperience } from '@/__mocks__';
@@ -36,7 +37,11 @@ jest.mock('@/queries/sign-in-experience', () => ({
 
 jest.mock('@/queries/custom-phrase', () => ({
   findAllCustomLanguageKeys: async () => [trTrKey, zhCnKey],
-  findCustomPhraseByLanguageKey: async (languageKey: string) => ({}),
+}));
+
+jest.mock('@/lib/phrase', () => ({
+  ...jest.requireActual('@/lib/phrase'),
+  getPhrase: jest.fn().mockResolvedValue(en),
 }));
 
 const phraseRequest = createRequester({

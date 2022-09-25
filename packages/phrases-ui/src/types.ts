@@ -1,11 +1,9 @@
 import { LanguageKey, languageKeyGuard } from '@logto/core-kit';
 
-/* Copied from i18next/index.d.ts */
-export type Resource = Record<LanguageKey, ResourceLanguage>;
+import en from './locales/en';
 
-export type ResourceLanguage = Record<string, ResourceKey>;
-
-export type ResourceKey = string | Record<string, unknown>;
+export type Phrase = typeof en;
+export type Resource = Record<LanguageKey, Phrase>;
 
 const languageCodeAndDisplayNameMappings: Record<LanguageKey, string> = {
   en: 'English',

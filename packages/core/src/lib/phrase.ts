@@ -1,30 +1,28 @@
 import { LanguageKey } from '@logto/core-kit';
 import resource from '@logto/phrases-ui';
+import { Phrase } from '@logto/phrases-ui/lib/types';
 import { CustomPhrase } from '@logto/schemas';
 import deepmerge from 'deepmerge';
-import { ResourceLanguage } from 'i18next';
 
 import { findCustomPhraseByLanguageKey } from '@/queries/custom-phrase';
-
-const getBuiltInResourceLanguage = (key: LanguageKey): ResourceLanguage => resource[key];
 
 export const isBuiltInLanguage = (key: string): key is LanguageKey =>
   Object.keys(resource).includes(key);
 
-export const getResourceLanguage = async (supportedLanguage: string, customLanguages: string[]) => {
+export const getPhrase = async (supportedLanguage: string, customLanguages: string[]) => {
   if (!isBuiltInLanguage(supportedLanguage)) {
-    return deepmerge<ResourceLanguage, CustomPhrase>(
+    return deepmerge<Phrase, CustomPhrase>(
       resource.en,
       await findCustomPhraseByLanguageKey(supportedLanguage)
     );
   }
 
   if (!customLanguages.includes(supportedLanguage)) {
-    return getBuiltInResourceLanguage(supportedLanguage);
+    return resource[supportedLanguage];
   }
 
-  return deepmerge<ResourceLanguage, CustomPhrase>(
-    getBuiltInResourceLanguage(supportedLanguage),
+  return deepmerge<Phrase, CustomPhrase>(
+    resource[supportedLanguage],
     await findCustomPhraseByLanguageKey(supportedLanguage)
   );
 };
