@@ -1,7 +1,7 @@
 import { CustomPhrase, SignInExperience } from '@logto/schemas';
 
 import { mockSignInExperience } from '@/__mocks__';
-import { koKrKey, mockZhCnCustomPhrase, trTrKey, zhCnKey } from '@/__mocks__/custom-phrase';
+import { mockZhCnCustomPhrase, trTrKey, zhCnKey } from '@/__mocks__/custom-phrase';
 import RequestError from '@/errors/RequestError';
 import customPhraseRoutes from '@/routes/custom-phrase';
 import { createRequester } from '@/utils/test-utils';
@@ -47,7 +47,7 @@ const findDefaultSignInExperience = jest.fn(
     languageInfo: {
       autoDetect: true,
       fallbackLanguage: mockFallbackLanguage,
-      fixedLanguage: koKrKey,
+      fixedLanguage: mockFallbackLanguage,
     },
   })
 );
@@ -119,7 +119,7 @@ describe('customPhraseRoutes', () => {
   });
 
   describe('DELETE /custom-phrases/:languageKey', () => {
-    it('should call deleteCustomPhraseByLanguageKey when custom phrase exists and is not default language in sign-in experience', async () => {
+    it('should call deleteCustomPhraseByLanguageKey when custom phrase exists and is not fallback language in sign-in experience', async () => {
       await customPhraseRequest.delete(`/custom-phrases/${mockLanguageKey}`);
       expect(deleteCustomPhraseByLanguageKey).toBeCalledWith(mockLanguageKey);
     });
@@ -130,11 +130,11 @@ describe('customPhraseRoutes', () => {
     });
 
     it('should return 404 status code when specified custom phrase does not exist before deleting', async () => {
-      const response = await customPhraseRequest.delete('/custom-phrases/xx-XX');
+      const response = await customPhraseRequest.delete('/custom-phrases/en-GB');
       expect(response.status).toEqual(404);
     });
 
-    it('should return 400 status code when specified custom phrase is used as default language in sign-in experience', async () => {
+    it('should return 400 status code when specified custom phrase is used as fallback language in sign-in experience', async () => {
       const response = await customPhraseRequest.delete(`/custom-phrases/${mockFallbackLanguage}`);
       expect(response.status).toEqual(400);
     });
