@@ -1,4 +1,3 @@
-import { UiPhrase } from '@logto/phrases-ui';
 import zhCN from '@logto/phrases-ui/lib/locales/zh-cn';
 import { SignInExperience } from '@logto/schemas';
 import { adminConsoleApplicationId, adminConsoleSignInExperience } from '@logto/schemas/lib/seeds';
@@ -155,18 +154,4 @@ describe('when the application is not admin-console', () => {
     expect(getPhrase).toBeCalledTimes(1);
     expect(getPhrase).toBeCalledWith(customizedLanguage, [customizedLanguage]);
   });
-});
-
-it('should fail when the phrase is not fully-translated', async () => {
-  const notFullyTranslatedUiPhrase: UiPhrase = {
-    translation: {
-      ...zhCN.translation,
-      // @ts-expect-error missing key-value pair `social_bind_with: '...'`
-      secondary: {
-        sign_in_with: '', // Unexpected empty value
-      },
-    },
-  };
-  getPhrase.mockResolvedValueOnce(notFullyTranslatedUiPhrase);
-  await expect(phraseRequest.get('/phrase')).resolves.toHaveProperty('status', 500);
 });
