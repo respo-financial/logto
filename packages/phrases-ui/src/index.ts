@@ -6,13 +6,15 @@ import koKR from './locales/ko-kr';
 import ptPT from './locales/pt-pt';
 import trTR from './locales/tr-tr';
 import zhCN from './locales/zh-cn';
-import { Resource } from './types';
+import { UiResource } from './types';
 
 export { languageOptions } from './types';
 
+export type { UiPhrase, UiResource } from './types';
+
 export type I18nKey = NormalizeKeyPaths<typeof en.translation>;
 
-const resource: Resource = {
+const resource: UiResource = {
   en,
   fr,
   'pt-PT': ptPT,

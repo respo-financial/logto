@@ -2,8 +2,8 @@ import { LanguageKey, languageKeyGuard } from '@logto/core-kit';
 
 import en from './locales/en';
 
-export type Phrase = typeof en;
-export type Resource = Record<LanguageKey, Phrase>;
+export type UiPhrase = typeof en;
+export type UiResource = Record<LanguageKey, UiPhrase>;
 
 const languageCodeAndDisplayNameMappings: Record<LanguageKey, string> = {
   en: 'English',
