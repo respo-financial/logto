@@ -178,6 +178,7 @@ importers:
       '@types/supertest': ^2.0.11
       '@types/tar': ^6.1.2
       chalk: ^4
+      clean-deep: ^3.4.0
       copyfiles: ^2.4.1
       dayjs: ^1.10.5
       debug: ^4.3.4
@@ -234,6 +235,7 @@ importers:
       '@logto/schemas': link:../schemas
       '@silverhand/essentials': 1.2.1
       chalk: 4.1.2
+      clean-deep: 3.4.0
       dayjs: 1.10.7
       debug: 4.3.4
       decamelize: 5.0.1
@@ -5543,6 +5545,15 @@ packages:
   /classnames/2.3.1:
     resolution: {integrity: sha512-OlQdbZ7gLfGarSqxesMesDa5uz7KFbID8Kpq/SxIoNGDqY8lSYs0D+hhtBXhcdB3rcbXArFr7vlHheLk1voeNA==}
     dev: true
+
+  /clean-deep/3.4.0:
+    resolution: {integrity: sha512-Lo78NV5ItJL/jl+B5w0BycAisaieJGXK1qYi/9m4SjR8zbqmrUtO7Yhro40wEShGmmxs/aJLI/A+jNhdkXK8mw==}
+    engines: {node: '>=4'}
+    dependencies:
+      lodash.isempty: 4.4.0
+      lodash.isplainobject: 4.0.6
+      lodash.transform: 4.6.0
+    dev: false
 
   /clean-regexp/1.0.0:
     resolution: {integrity: sha512-GfisEZEJvzKrmGWkvfhgzcz/BllN1USeqD2V6tg14OAOgaCD2Z/PUEuxnAZ/nPvmaHRG7a8y77p1T/IRQ4D1Hw==}

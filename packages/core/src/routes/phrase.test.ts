@@ -1,5 +1,5 @@
+import { UiPhrase } from '@logto/phrases-ui';
 import zhCN from '@logto/phrases-ui/lib/locales/zh-cn';
-import { Phrase } from '@logto/phrases-ui/lib/types';
 import { SignInExperience } from '@logto/schemas';
 import { adminConsoleApplicationId, adminConsoleSignInExperience } from '@logto/schemas/lib/seeds';
 import { Provider } from 'oidc-provider';
@@ -158,7 +158,7 @@ describe('when the application is not admin-console', () => {
 });
 
 it('should fail when the phrase is not fully-translated', async () => {
-  const notFullyTranslatedPhrase: Phrase = {
+  const notFullyTranslatedUiPhrase: UiPhrase = {
     translation: {
       ...zhCN.translation,
       // @ts-expect-error missing key-value pair `social_bind_with: '...'`
@@ -167,6 +167,6 @@ it('should fail when the phrase is not fully-translated', async () => {
       },
     },
   };
-  getPhrase.mockResolvedValueOnce(notFullyTranslatedPhrase);
+  getPhrase.mockResolvedValueOnce(notFullyTranslatedUiPhrase);
   await expect(phraseRequest.get('/phrase')).resolves.toHaveProperty('status', 500);
 });

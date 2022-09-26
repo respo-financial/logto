@@ -47,6 +47,38 @@ afterEach(() => {
   jest.clearAllMocks();
 });
 
+it('should ignore empty string values from the custom phrase', async () => {
+  const mockTranslationInput = {
+    email: 'Email 3',
+    phone_number: 'Phone number 4',
+    confirm_password: 'Confirm password 5',
+  };
+  const mockEnCustomPhraseWithEmptyStringValues = {
+    languageKey: enKey,
+    translation: {
+      input: {
+        ...resource.en.translation.input,
+        ...mockTranslationInput,
+        username: '',
+        password: '',
+      },
+    },
+  };
+
+  findCustomPhraseByLanguageKey.mockResolvedValueOnce(mockEnCustomPhraseWithEmptyStringValues);
+  await expect(getPhrase(enKey, [enKey])).resolves.toEqual(
+    deepmerge(englishBuiltInPhrase, {
+      languageKey: enKey,
+      translation: {
+        input: {
+          ...resource.en.translation.input,
+          ...mockTranslationInput,
+        },
+      },
+    })
+  );
+});
+
 describe('when the language is English', () => {
   it('should be English custom phrase merged with its built-in phrase when its custom phrase exists', async () => {
     await expect(getPhrase(enKey, [enKey])).resolves.toEqual(
