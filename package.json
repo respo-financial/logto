@@ -10,7 +10,7 @@
     "dev": "pnpm -r prepack && pnpm start:dev",
     "start:dev": "pnpm -r --parallel --filter=!@logto/integration-tests dev",
     "start": "cd packages/core && NODE_ENV=production node .",
-    "cli": "logto",
+    "cli": "set -eo pipefail; logto",
     "alteration": "logto db alt",
     "ci:build": "pnpm -r build",
     "ci:lint": "pnpm -r --parallel lint",
