@@ -24,6 +24,8 @@ const buildAdminConsoleClientMetadata = (): AllClientMetadata => {
     ...new Set([appendPath(localhostUrl, '/console').toString(), adminConsoleUrl.toString()]),
   ];
 
+  console.log(`URLs are ${JSON.stringify(urls)}`);
+
   return {
     ...getConstantClientMetadata(ApplicationType.SPA),
     client_id: adminConsoleApplicationId,
