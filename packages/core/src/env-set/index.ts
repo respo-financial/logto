@@ -23,8 +23,8 @@ const loadEnvValues = async () => {
   const isIntegrationTest = isTrue(getEnv('INTEGRATION_TEST'));
   const isHttpsEnabled = Boolean(process.env.HTTPS_CERT_PATH && process.env.HTTPS_KEY_PATH);
   const port = Number(getEnv('PORT', '3001'));
-  // const localhostUrl = `${isHttpsEnabled ? 'https' : 'http'}://0.0.0.0:${port}`;
-  Const localhostUrl = `${isHttpsEnabled ? 'https' : 'http'}://localhost:${port}`;
+  // Const localhostUrl = `${isHttpsEnabled ? 'https' : 'http'}://0.0.0.0:${port}`;
+  const localhostUrl = `${isHttpsEnabled ? 'https' : 'http'}://localhost:${port}`;
   const endpoint = getEnv('ENDPOINT', localhostUrl);
   console.log(`ENDPOINT SET as ${endpoint}`);
 

@@ -92,7 +92,7 @@ const Main = () => {
 };
 
 const App = () => (
-  <BrowserRouter basename={getBasename('console', '5002')}>
+  <BrowserRouter basename={getBasename('console', '7002')}>
     <LogtoProvider
       config={{
         endpoint: window.location.origin,
