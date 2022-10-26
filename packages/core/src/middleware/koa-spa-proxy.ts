@@ -10,7 +10,7 @@ import serveStatic from '@/middleware/koa-serve-static';
 
 export default function koaSpaProxy<StateT, ContextT extends IRouterParamContext, ResponseBodyT>(
   packagePath = 'ui',
-  port = 5001,
+  port = 7001,
   prefix = ''
 ): MiddlewareType<StateT, ContextT, ResponseBodyT> {
   type Middleware = MiddlewareType<StateT, ContextT, ResponseBodyT>;
