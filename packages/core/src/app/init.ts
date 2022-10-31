@@ -54,7 +54,7 @@ export default async function initApp(app: Koa): Promise<void> {
   app.use(
     mount(
       '/' + MountedApps.DemoApp,
-      compose([koaCheckDemoApp(), koaSpaProxy(MountedApps.DemoApp, 5003, MountedApps.DemoApp)])
+      compose([koaCheckDemoApp(), koaSpaProxy(MountedApps.DemoApp, 7003, MountedApps.DemoApp)])
     )
   );
 
