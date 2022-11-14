@@ -33,6 +33,7 @@ export default function connectorRoutes<T extends AuthedRouter>(router: T) {
     async (ctx, next) => {
       const { target: filterTarget } = ctx.query;
       const connectors = await getLogtoConnectors();
+      console.log(`Connectors fetched in routes is ${JSON.stringify(connectors)}`);
 
       assertThat(
         connectors.filter(

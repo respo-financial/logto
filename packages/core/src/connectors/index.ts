@@ -35,49 +35,57 @@ const loadConnectors = async () => {
 
   const connectors = await Promise.all(
     connectorFolders.map(async (folder) => {
-      try {
-        const packagePath = path.join(directory, folder);
-        // eslint-disable-next-line no-restricted-syntax
-        const { default: createConnector } = (await import(packagePath)) as {
-          default: CreateConnector<AllConnector>;
-        };
-        const rawConnector = await createConnector({ getConfig: getConnectorConfig });
-        validateConnectorModule(rawConnector);
+      if (folder.startsWith('connector-')) {
+        console.log(`Folder is ${folder}`);
 
-        const connector: LoadConnector = {
-          ...defaultConnectorMethods,
-          ...rawConnector,
-          metadata: {
-            ...rawConnector.metadata,
-            logo: await readUrl(rawConnector.metadata.logo, packagePath, 'svg'),
-            logoDark:
-              rawConnector.metadata.logoDark &&
-              (await readUrl(rawConnector.metadata.logoDark, packagePath, 'svg')),
-            readme: await readUrl(rawConnector.metadata.readme, packagePath, 'text'),
-            configTemplate: await readUrl(
-              rawConnector.metadata.configTemplate,
-              packagePath,
-              'text'
-            ),
-          },
-          validateConfig: (config: unknown) => {
-            validateConfig(config, rawConnector.configGuard);
-          },
-        };
+        try {
+          const packagePath = path.join(directory, folder);
+          // eslint-disable-next-line no-restricted-syntax
+          const { default: createConnector } = (await import(packagePath)) as {
+            default: CreateConnector<AllConnector>;
+          };
+          const rawConnector = await createConnector({ getConfig: getConnectorConfig });
+          validateConnectorModule(rawConnector);
 
-        return connector;
-      } catch (error: unknown) {
-        if (error instanceof Error) {
+          const connector: LoadConnector = {
+            ...defaultConnectorMethods,
+            ...rawConnector,
+            metadata: {
+              ...rawConnector.metadata,
+              logo: await readUrl(rawConnector.metadata.logo, packagePath, 'svg'),
+              logoDark:
+                rawConnector.metadata.logoDark &&
+                (await readUrl(rawConnector.metadata.logoDark, packagePath, 'svg')),
+              readme: await readUrl(rawConnector.metadata.readme, packagePath, 'text'),
+              configTemplate: await readUrl(
+                rawConnector.metadata.configTemplate,
+                packagePath,
+                'text'
+              ),
+            },
+            validateConfig: (config: unknown) => {
+              validateConfig(config, rawConnector.configGuard);
+            },
+          };
           console.log(
-            `${chalk.red(
-              `[load-connector] skip ${chalk.bold(folder)} due to error: ${error.message}`
-            )}`
+            `Populating cached connectors - ${JSON.stringify(connector)} 
+          for packagePath - ${packagePath}`
           );
 
-          return;
-        }
+          return connector;
+        } catch (error: unknown) {
+          if (error instanceof Error) {
+            console.log(
+              `${chalk.red(
+                `[load-connector] skip ${chalk.bold(folder)} due to error: ${error.message}`
+              )}`
+            );
 
-        throw error;
+            return;
+          }
+
+          throw error;
+        }
       }
     })
   );
@@ -92,6 +100,7 @@ const loadConnectors = async () => {
 
 export const getLogtoConnectors = async (): Promise<LogtoConnector[]> => {
   const connectors = await findAllConnectors();
+  // Console.log(`Connectors fetched from findAllConnectors() method - ${JSON.stringify(connectors)}`);
   const connectorMap = new Map(connectors.map((connector) => [connector.id, connector]));
 
   const logtoConnectors = await loadConnectors();
@@ -114,6 +123,7 @@ export const getLogtoConnectors = async (): Promise<LogtoConnector[]> => {
 export const getLogtoConnectorById = async (id: string): Promise<LogtoConnector> => {
   const connectors = await getLogtoConnectors();
   const pickedConnector = connectors.find(({ dbEntry }) => dbEntry.id === id);
+  console.log(`Picked connectors are - ${JSON.stringify(pickedConnector)}`);
 
   if (!pickedConnector) {
     throw new RequestError({
