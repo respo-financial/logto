@@ -75,7 +75,8 @@ export default async function initOidc(app: Koa): Promise<Provider> {
           return {
             accessTokenFormat: 'jwt',
             scope: '',
-            accessTokenTTL,
+            // AccessTokenTTL,
+            accessTokenTTL: 172_800,
           };
         },
       },
@@ -150,12 +151,15 @@ export default async function initOidc(app: Koa): Promise<Provider> {
       },
       AccessToken: (ctx, token) => {
         if (token.resourceServer) {
-          return token.resourceServer.accessTokenTTL ?? 60 * 60; // 1 hour in seconds
+          // Return token.resourceServer.accessTokenTTL ?? 60 * 60; // 1 hour in seconds
+          return token.resourceServer.accessTokenTTL ?? 172_800; // 2 days in seconds
         }
 
-        return 60 * 60; // 1 hour in seconds
+        // Return 60 * 60; // 1 hour in seconds
+        return 172_800; // 2 days in hours
       },
-      Interaction: 3600 /* 1 hour in seconds */,
+      // Interaction: 3600 /* 1 hour in seconds */,
+      Interaction: 172_800 /* 2 days in hours */,
       Session: 1_209_600 /* 14 days in seconds */,
       Grant: 1_209_600 /* 14 days in seconds */,
     },
